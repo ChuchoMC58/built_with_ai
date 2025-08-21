@@ -2,6 +2,14 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+} from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { MenuIcon } from "lucide-react";
 
 export function Navbar() {
   return (
@@ -13,25 +21,48 @@ export function Navbar() {
             BuiltWithAI
           </Link>
         </div>
-        <nav className="hidden md:flex items-center gap-8 text-sm text-foreground/80">
-          <Link href="#caracteristicas" className="hover:text-foreground">
-            Características
-          </Link>
-          <Link href="#precios" className="hover:text-foreground">
-            Precios
-          </Link>
-          <Link href="#blog" className="hover:text-foreground">
-            Blog
-          </Link>
-          <Link href="#afiliados" className="hover:text-foreground">
-            Afiliados
-          </Link>
-        </nav>
-        <div className="flex items-center gap-3">
-          <Link href="#ingresar" className="hidden sm:inline text-sm text-foreground/80 hover:text-foreground">
-            Iniciar sesión
-          </Link>
-          <Button className="rounded-full">Comenzar</Button>
+        <div className="hidden md:flex items-center gap-8">
+          <NavigationMenu className="text-sm text-foreground/80">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuLink href="#caracteristicas">Características</NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink href="#precios">Precios</NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink href="#blog">Blog</NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink href="#afiliados">Afiliados</NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+          <div className="flex items-center gap-3">
+            <Link href="#ingresar" className="text-sm text-foreground/80 hover:text-foreground">
+              Iniciar sesión
+            </Link>
+            <Button className="rounded-full">Comenzar</Button>
+          </div>
+        </div>
+        <div className="md:hidden flex items-center gap-2">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" aria-label="Abrir menú">
+                <MenuIcon className="size-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right">
+              <nav className="flex flex-col gap-4 p-4 text-sm">
+                <Link href="#caracteristicas">Características</Link>
+                <Link href="#precios">Precios</Link>
+                <Link href="#blog">Blog</Link>
+                <Link href="#afiliados">Afiliados</Link>
+                <div className="h-px bg-border my-2" />
+                <Button className="w-full">Comenzar</Button>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>

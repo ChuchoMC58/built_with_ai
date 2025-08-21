@@ -1,7 +1,7 @@
 # Development Instructions for GitHub Copilot 
 
 ## Project Overview
-This is a **Next.js 15** project using shadcn/ui v4 for components and **Tailwind CSS** v4 for styling, **TypeScript** for type safety.
+This is a **Next.js 15** project using shadcn/ui v4 from mcp server for components and **Tailwind CSS** v4 for styling, **TypeScript** for type safety.
 
 ## Tech Stack
 - **Framework**: Next.js 15 (App Router)
