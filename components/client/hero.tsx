@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import UnicornShader from "@/components/client/unicorn-shader";
+import { Card } from "@/components/ui/card";
 
 export default function Hero() {
   return (
@@ -36,9 +37,15 @@ export default function Hero() {
 
         {/* Tarjetas de ejemplo estilo mock, simples por ahora */}
         <div className="relative flex items-end justify-center gap-4 sm:gap-6 px-4 md:px-0 h-[42vh] md:h-[60vh]">
-          <div className="h-full aspect-[9/16] rounded-2xl bg-white/5 border border-white/10 shadow-2xl rotate-[-8deg] translate-y-6" />
-          <div className="h-full aspect-[9/16] rounded-2xl bg-white/10 border border-white/10 shadow-2xl" />
-          <div className="h-full aspect-[9/16] rounded-2xl bg-white/5 border border-white/10 shadow-2xl rotate-[12deg] translate-y-8" />
+          <Card className="relative p-0 h-full aspect-[9/16] rounded-2xl border-white/10 bg-white/5 shadow-2xl rotate-[-8deg] translate-y-6 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent" />
+          </Card>
+          <Card className="relative p-0 h-full aspect-[9/16] rounded-2xl border-white/10 bg-white/10 shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-white/25 to-transparent" />
+          </Card>
+          <Card className="relative p-0 h-full aspect-[9/16] rounded-2xl border-white/10 bg-white/5 shadow-2xl rotate-[12deg] translate-y-8 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent" />
+          </Card>
         </div>
       </div>
     </section>
