@@ -3,6 +3,8 @@ import Showcase from "@/components/client/showcase";
 import Features from "@/components/client/features";
 import Prompts from "@/components/client/prompts";
 import Benefits from "@/components/client/benefits";
+import Cta from "@/components/client/cta";
+import SiteFooter from "@/components/client/site-footer";
 
 export default function Home() {
   return (
@@ -11,6 +13,8 @@ export default function Home() {
       <Showcase />
       <Features />
   <Benefits />
+  <Cta />
+  <SiteFooter />
     </main>
   );
 }
