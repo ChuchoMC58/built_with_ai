@@ -3,9 +3,14 @@
 import Script from "next/script";
 import { useEffect } from "react";
 
+type UnicornStudioGlobal = {
+  init?: () => void;
+  isInitialized?: boolean;
+};
+
 declare global {
   interface Window {
-    UnicornStudio?: any & { isInitialized?: boolean };
+    UnicornStudio?: UnicornStudioGlobal;
   }
 }
 

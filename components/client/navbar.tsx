@@ -39,10 +39,12 @@ export function Navbar() {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex items-center gap-3">
-            <Link href="#ingresar" className="text-sm text-foreground/80 hover:text-foreground">
+            <Link href="/signup" className="text-sm text-foreground/80 hover:text-foreground">
               Iniciar sesión
             </Link>
-            <Button className="rounded-full">Comenzar</Button>
+            <Button asChild className="rounded-full">
+              <Link href="/signup">Comenzar</Link>
+            </Button>
           </div>
         </div>
         <div className="md:hidden flex items-center gap-2">
@@ -59,7 +61,9 @@ export function Navbar() {
                 <Link href="#blog">Blog</Link>
                 <Link href="#afiliados">Afiliados</Link>
                 <div className="h-px bg-border my-2" />
-                <Button className="w-full">Comenzar</Button>
+                <Button asChild className="w-full">
+                  <Link href="/signup">Comenzar</Link>
+                </Button>
               </nav>
             </SheetContent>
           </Sheet>
