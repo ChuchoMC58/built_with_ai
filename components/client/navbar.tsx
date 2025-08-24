@@ -39,11 +39,11 @@ export function Navbar() {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex items-center gap-3">
-            <Link href="/signup" className="text-sm text-foreground/80 hover:text-foreground">
+            <Link href="/sign-in" className="text-sm text-foreground/80 hover:text-foreground">
               Iniciar sesión
             </Link>
             <Button asChild className="rounded-full">
-              <Link href="/signup">Comenzar</Link>
+              <Link href="/sign-up">Comenzar</Link>
             </Button>
           </div>
         </div>
@@ -62,7 +62,7 @@ export function Navbar() {
                 <Link href="#afiliados">Afiliados</Link>
                 <div className="h-px bg-border my-2" />
                 <Button asChild className="w-full">
-                  <Link href="/signup">Comenzar</Link>
+                  <Link href="/sign-up">Comenzar</Link>
                 </Button>
               </nav>
             </SheetContent>

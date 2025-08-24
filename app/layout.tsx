@@ -32,14 +32,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
- <ClerkProvider>
+    <ClerkProvider>
       <html lang="en"  className="dark">
-         <body
+        <body
     className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
-  <Navbar />
-  {children}
-      </body>
+        <Navbar />
+        {children}
+        </body>
       </html>
     </ClerkProvider>
   );
