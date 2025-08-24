@@ -5,7 +5,6 @@ import { useEffect } from "react";
 
 type UnicornStudioGlobal = {
   init?: () => void;
-  isInitialized?: boolean;
 };
 
 declare global {
@@ -18,9 +17,10 @@ export default function UnicornShader() {
   // Inicializa si el script ya está disponible
   useEffect(() => {
     const u = window.UnicornStudio;
-    if (u && !u.isInitialized && typeof u.init === "function") {
+    if (u && typeof u.init === "function") {
+      // Re-inicializa siempre que el componente se monte (navegación cliente)
+      // La librería es idempotente y vuelve a escanear los data-us-project del DOM
       u.init();
-      u.isInitialized = true;
     }
   }, []);
 
@@ -33,9 +33,8 @@ export default function UnicornShader() {
         onLoad={() => {
           try {
             const u = window.UnicornStudio;
-            if (u && !u.isInitialized && typeof u.init === "function") {
+            if (u && typeof u.init === "function") {
               u.init();
-              u.isInitialized = true;
             }
           } catch {}
         }}
