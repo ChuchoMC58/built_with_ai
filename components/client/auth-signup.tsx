@@ -15,26 +15,69 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useSignUp, useClerk, useSignIn } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
-const schema = z.object({
+const baseSchema = z.object({
   name: z.string().min(2, "Ingresa tu nombre"),
   email: z.string().email("Correo inválido"),
   password: z.string().min(6, "Mínimo 6 caracteres"),
 });
 
-type FormValues = z.infer<typeof schema>;
+const codeSchema = z.object({
+  code: z.string().min(6, "Código de 6 dígitos"),
+});
+
+const schema = z.union([baseSchema, codeSchema]);
+
+type FormValues = z.infer<typeof schema> & {
+  name?: string;
+  email?: string;
+  password?: string;
+  code?: string;
+};
 
 export default function AuthSignup() {
   const [showPassword, setShowPassword] = useState(false);
+  const [pendingVerification, setPendingVerification] = useState(false);
+  const { signUp, isLoaded } = useSignUp();
+  const { setActive } = useClerk();
+  const { signIn, isLoaded: isSignInLoaded } = useSignIn();
+  const router = useRouter();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "", password: "" },
+    defaultValues: { name: "", email: "", password: "", code: "" },
     mode: "onTouched",
   });
 
-  const onSubmit = (values: FormValues) => {
-    // Placeholder: aquí iría tu request
-    console.log("signup", values);
+  const onSubmit = async (values: FormValues) => {
+    if (!isLoaded) return;
+
+    try {
+      if (!pendingVerification) {
+        // Paso 1: crear cuenta y enviar código por email
+        await signUp.create({
+          emailAddress: values.email!,
+          password: values.password!,
+          firstName: values.name,
+        });
+        await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+        setPendingVerification(true);
+        return;
+      }
+
+      // Paso 2: verificar código y activar sesión
+      const attempt = await signUp.attemptEmailAddressVerification({ code: values.code! });
+      if (attempt.status === "complete") {
+        await setActive({ session: attempt.createdSessionId });
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      // Muestra el mensaje de error en el primer campo
+      const message = err?.errors?.[0]?.message ?? "Ocurrió un error";
+      form.setError(pendingVerification ? "code" : "email", { message });
+    }
   };
 
   return (
@@ -43,6 +86,7 @@ export default function AuthSignup() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {!pendingVerification && (
           <FormField
             control={form.control}
             name="name"
@@ -60,8 +104,10 @@ export default function AuthSignup() {
               </FormItem>
             )}
           />
+          )}
 
-          <FormField
+          {!pendingVerification && (
+            <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
@@ -79,8 +125,10 @@ export default function AuthSignup() {
               </FormItem>
             )}
           />
+          )}
 
-          <FormField
+          {!pendingVerification && (
+            <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
@@ -108,25 +156,63 @@ export default function AuthSignup() {
               </FormItem>
             )}
           />
+          )}
 
-          <Button type="submit" className="w-full rounded-full">
-            Crear cuenta
+          {pendingVerification && (
+            <FormField
+              control={form.control}
+              name="code"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-white/70">Código de verificación (enviado a tu correo)</FormLabel>
+                  <FormControl>
+                    <Input
+                      inputMode="numeric"
+                      placeholder="123456"
+                      className="h-11 rounded-full bg-white/[0.06] border-white/10 placeholder:text-white/45"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          <Button type="submit" className="w-full rounded-full" disabled={!isLoaded}>
+            {pendingVerification ? "Verificar código" : "Crear cuenta"}
           </Button>
 
           <p className="text-center text-xs text-white/60">
             ¿Ya tienes una cuenta? <a href="#" className="text-white hover:underline">Inicia sesión</a>
           </p>
 
-          <div className="flex items-center gap-4 py-2">
-            <div className="h-px flex-1 bg-white/10" />
-            <span className="text-xs text-white/40">o continúa con</span>
-            <div className="h-px flex-1 bg-white/10" />
-          </div>
+          {!pendingVerification && (
+            <>
+              <div className="flex items-center gap-4 py-2">
+                <div className="h-px flex-1 bg-white/10" />
+                <span className="text-xs text-white/40">o continúa con</span>
+                <div className="h-px flex-1 bg-white/10" />
+              </div>
 
-          <Button type="button" variant="outline" className="w-full rounded-full border-white/15 bg-white/5 hover:bg-white/10">
-            <span className="mr-3 inline-flex h-4 w-4 items-center justify-center rounded-sm bg-white/80 text-[#4285F4]">G</span>
-            Google
-          </Button>
+              <Button
+                type="button"
+                onClick={async () => {
+                  if (!isSignInLoaded) return;
+                  await signIn?.authenticateWithRedirect({
+                    strategy: "oauth_google",
+                    redirectUrl: "/sso-callback",
+                    redirectUrlComplete: "/dashboard",
+                  });
+                }}
+                variant="outline"
+                className="w-full rounded-full border-white/15 bg-white/5 hover:bg-white/10"
+              >
+                <span className="mr-3 inline-flex h-4 w-4 items-center justify-center rounded-sm bg-white/80 text-[#4285F4]">G</span>
+                Google
+              </Button>
+            </>
+          )}
 
           <FormDescription className="mt-6 text-center text-[11px] leading-relaxed text-white/50">
             Al registrarte aceptas nuestros <a className="underline hover:text-white" href="#">Términos de Servicio</a> y la <a className="underline hover:text-white" href="#">Política de Privacidad</a>.

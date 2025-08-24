@@ -1,4 +1,12 @@
 import type { Metadata } from "next";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs'
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/client/navbar";
@@ -24,13 +32,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-  <html lang="es" className="dark">
-      <body
+ <ClerkProvider>
+      <html lang="en"  className="dark">
+         <body
     className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
   <Navbar />
   {children}
       </body>
-    </html>
+      </html>
+    </ClerkProvider>
   );
 }
+  
+
+
