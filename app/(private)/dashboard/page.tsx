@@ -4,12 +4,19 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LayoutGrid, Clapperboard, Film } from "lucide-react";
 import Link from "next/link";
+import DashboardSidebar from "@/components/client/dashboard-sidebar";
 
 export default async function DashboardPage() {
   const user = await currentUser();
   const firstName = user?.firstName ?? "";
   return (
-    <main className="min-h-screen px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
+    <main className="min-h-screen">
+      <div className="grid lg:grid-cols-[auto_1fr] lg:gap-0">
+        {/* Sidebar */}
+        <DashboardSidebar />
+
+        {/* Contenido */}
+        <div className="px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
       {/* Encabezado y aviso de plan */}
       <div className="mx-auto max-w-7xl mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-white/80">
@@ -119,6 +126,8 @@ export default async function DashboardPage() {
             <p className="mt-3 text-sm text-white/80 font-medium">Primeros pasos con StoryShort</p>
           </CardContent>
         </Card>
+      </div>
+        </div>
       </div>
     </main>
   );

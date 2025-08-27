@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MenuIcon } from "lucide-react";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 export function Navbar() {
   return (
@@ -39,12 +40,19 @@ export function Navbar() {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex items-center gap-3">
-            <Link href="/sign-in" className="text-sm text-foreground/80 hover:text-foreground">
-              Iniciar sesión
-            </Link>
-            <Button asChild className="rounded-full">
-              <Link href="/sign-up">Comenzar</Link>
-            </Button>
+            <SignedOut>
+              <Link href="/sign-in" className="text-sm text-foreground/80 hover:text-foreground">
+                Iniciar sesión
+              </Link>
+              <Button asChild className="rounded-full">
+                <Link href="/sign-up">Comenzar</Link>
+              </Button>
+            </SignedOut>
+            <SignedIn>
+              <Button asChild className="rounded-full">
+                <Link href="/dashboard">Ir al dashboard</Link>
+              </Button>
+            </SignedIn>
           </div>
         </div>
         <div className="md:hidden flex items-center gap-2">
@@ -61,9 +69,19 @@ export function Navbar() {
                 <Link href="#blog">Blog</Link>
                 <Link href="#afiliados">Afiliados</Link>
                 <div className="h-px bg-border my-2" />
-                <Button asChild className="w-full">
-                  <Link href="/sign-up">Comenzar</Link>
-                </Button>
+                <SignedOut>
+                  <Button asChild className="w-full">
+                    <Link href="/sign-up">Comenzar</Link>
+                  </Button>
+                  <Link href="/sign-in" className="text-center text-foreground/80 hover:text-foreground">
+                    Iniciar sesión
+                  </Link>
+                </SignedOut>
+                <SignedIn>
+                  <Button asChild className="w-full">
+                    <Link href="/dashboard">Ir al dashboard</Link>
+                  </Button>
+                </SignedIn>
               </nav>
             </SheetContent>
           </Sheet>
