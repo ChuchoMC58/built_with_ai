@@ -184,7 +184,7 @@ export default function AuthSignup() {
           </Button>
 
           <p className="text-center text-xs text-white/60">
-            ¿Ya tienes una cuenta? <a href="#" className="text-white hover:underline">Inicia sesión</a>
+            ¿Ya tienes una cuenta? <a href="/sign-in" className="text-white hover:underline">Inicia sesión</a>
           </p>
 
           {!pendingVerification && (

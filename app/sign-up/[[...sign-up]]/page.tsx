@@ -5,8 +5,6 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 export default function SignupPage() {
   return (
   <main className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2">
-      {/* Oculta el navbar en esta ruta */}
-      <style>{`header.sticky{display:none!important}`}</style>
       {/* Columna izquierda: formulario */}
       <section className="relative flex items-center justify-center bg-black p-6 sm:p-10">
   <div className="w-full max-w-md">
