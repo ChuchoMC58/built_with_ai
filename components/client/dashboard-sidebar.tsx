@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -15,9 +16,18 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Flame,
   MenuIcon,
+  Link2,
+  Moon,
+  LogOut,
+  Sparkles,
+  Coins,
 } from "lucide-react";
+import { useUser, SignOutButton } from "@clerk/nextjs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Item = { href: string; label: string; icon: React.ComponentType<any> };
 
@@ -36,19 +46,37 @@ const settingsItems: Item[] = [
 
 export default function DashboardSidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [userOpen, setUserOpen] = useState(true);
+  const { user, isLoaded } = useUser();
+  const name = user ? `${user.firstName ?? ""}`.trim() || user.username || user.id : "";
+  const email = user?.primaryEmailAddress?.emailAddress ?? "";
+
+  // Toggle de tema simple (añade/quita la clase 'dark' del html)
+  const [dark, setDark] = useState(true);
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const hasDark = document.documentElement.classList.contains("dark");
+      setDark(hasDark);
+    }
+  }, []);
+  const toggleTheme = () => {
+    if (typeof document === "undefined") return;
+    const el = document.documentElement;
+    const next = !el.classList.contains("dark");
+    el.classList.toggle("dark", next);
+    setDark(next);
+  };
 
   const Aside = (
     <aside
       className={cn(
-        "hidden lg:block",
+        "hidden lg:flex lg:flex-col sticky top-0 h-[100dvh] overflow-y-auto border-r border-white/10 bg-black/40 backdrop-blur",
         collapsed ? "w-[72px]" : "w-[260px]"
       )}
     >
-  {/* Contenedor de altura completa que se desplaza con la página */}
-  <div className="min-h-screen flex flex-col border-r border-white/10 bg-black/40 backdrop-blur">
         <div className="flex items-center justify-between gap-2 h-14 px-3">
         <Link href="/" className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded-md bg-yellow-400" />
+          <Image src="/globe.svg" alt="Logo StoryShort" width={24} height={24} className="rounded-md" />
           {!collapsed && <span className="font-semibold">StoryShort.ai</span>}
         </Link>
         <TooltipProvider>
@@ -66,7 +94,7 @@ export default function DashboardSidebar() {
             <TooltipContent>{collapsed ? "Expandir" : "Colapsar"}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        </div>
+  </div>
 
         <nav className="px-2 py-2 space-y-1">
         {mainItems.map((it) => (
@@ -93,17 +121,87 @@ export default function DashboardSidebar() {
         ))}
         </nav>
 
-        {/* Tarjeta de créditos */}
-        <div className={cn("mt-auto p-3", collapsed && "hidden")}> 
-          <div className="rounded-2xl bg-gradient-to-br from-purple-700/60 to-fuchsia-600/60 p-4 text-white">
-            <div className="text-sm">10</div>
-            <div className="text-xs text-white/80">Créditos disponibles</div>
-            <Button asChild className="mt-4 w-full rounded-full bg-white text-black hover:bg-white/90">
-              <Link href="/pricing">Actualizar ahora</Link>
-            </Button>
+        {/* Zona inferior: tarjeta de créditos + panel de usuario */}
+        <div className={cn("mt-auto p-3 space-y-3", collapsed && "hidden")}>
+          {/* Tarjeta de créditos / upgrade */}
+          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-purple-600/25 via-fuchsia-600/20 to-transparent p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Coins className="size-5 text-purple-400" />
+                <span className="text-2xl font-semibold">10</span>
+              </div>
+              <span className="text-xs rounded-full bg-purple-600/80 px-2 py-1">Free</span>
+            </div>
+            <p className="mt-1 text-xs text-white/70">Créditos disponibles</p>
+            <p className="mt-3 text-sm text-white/90">¿Necesitas más? Mejora tu plan</p>
+            <Link href="/dashboard/upgrade" className="mt-4 block">
+              <Button className="w-full rounded-full bg-purple-600 hover:bg-purple-500 text-white">Mejorar ahora</Button>
+            </Link>
+          </div>
+
+          {/* Panel de usuario */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden">
+            {/* Header: usuario + toggle */}
+            <div className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user?.imageUrl ?? undefined} alt={name || "Usuario"} />
+                  <AvatarFallback>{(name || "U").slice(0,2).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <div className="text-sm font-medium truncate">{isLoaded ? (name || "Usuario") : ""}</div>
+                  <div className="text-xs text-white/60 truncate">{email}</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                aria-label={userOpen ? "Ocultar" : "Mostrar"}
+                aria-expanded={userOpen}
+                onClick={() => setUserOpen((v) => !v)}
+                className="shrink-0 text-white/70 hover:text-white"
+              >
+                {userOpen ? <ChevronDown className="size-4" /> : <ChevronUp className="size-4" />}
+              </button>
+            </div>
+            {userOpen && (
+              <>
+                {/* Modo oscuro */}
+                <div className="border-t border-white/10 px-4 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm"><Moon className="size-4 text-white/70" /> Modo oscuro</div>
+                  <button
+                    type="button"
+                    onClick={toggleTheme}
+                    className={cn(
+                      "relative inline-flex h-6 w-12 items-center rounded-full transition-colors",
+                      dark ? "bg-indigo-500" : "bg-white/10"
+                    )}
+                    aria-pressed={dark}
+                    aria-label="Cambiar tema"
+                  >
+                    <span
+                      className={cn(
+                        "inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform",
+                        dark ? "translate-x-6" : "translate-x-1"
+                      )}
+                    />
+                  </button>
+                </div>
+                {/* Upgrade */}
+                <Link href="/dashboard/upgrade" className="border-t border-white/10 px-4 py-3 flex items-center gap-2 text-sm hover:bg-white/[0.03]">
+                  <Sparkles className="size-4 text-white/70" /> Mejorar a Pro
+                </Link>
+                {/* Logout */}
+                <div className="border-t border-white/10">
+                  <SignOutButton signOutOptions={{}}>
+                    <Button variant="ghost" className="w-full justify-start gap-2 rounded-none text-left text-sm hover:bg-white/[0.03]">
+                      <LogOut className="size-4 text-white/70" /> Cerrar sesión
+                    </Button>
+                  </SignOutButton>
+                </div>
+              </>
+            )}
           </div>
         </div>
-      </div>
     </aside>
   );
 
@@ -121,7 +219,7 @@ export default function DashboardSidebar() {
             {/* Aside expandido dentro del sheet */}
             <div className="flex h-full flex-col bg-black">
               <div className="h-14 px-4 flex items-center gap-2 border-b border-white/10">
-                <div className="h-6 w-6 rounded-md bg-yellow-400" />
+                <Image src="/globe.svg" alt="Logo StoryShort" width={24} height={24} className="rounded-md" />
                 <span className="font-semibold">StoryShort.ai</span>
               </div>
               <nav className="px-2 py-2 space-y-1">
@@ -132,13 +230,61 @@ export default function DashboardSidebar() {
                   </Link>
                 ))}
               </nav>
-              <div className="mt-auto p-3">
-                <div className="rounded-2xl bg-gradient-to-br from-purple-700/60 to-fuchsia-600/60 p-4 text-white">
-                  <div className="text-sm">10</div>
-                  <div className="text-xs text-white/80">Créditos disponibles</div>
-                  <Button asChild className="mt-4 w-full rounded-full bg-white text-black hover:bg-white/90">
-                    <Link href="/pricing">Actualizar ahora</Link>
-                  </Button>
+              {/* Créditos + panel usuario (móvil) */}
+              <div className="mt-auto p-3 space-y-3">
+                {/* Tarjeta de créditos */}
+                <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-purple-600/25 via-fuchsia-600/20 to-transparent p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Coins className="size-5 text-purple-400" />
+                      <span className="text-2xl font-semibold">10</span>
+                    </div>
+                    <span className="text-xs rounded-full bg-purple-600/80 px-2 py-1">Free</span>
+                  </div>
+                  <p className="mt-1 text-xs text-white/70">Créditos disponibles</p>
+                  <p className="mt-3 text-sm text-white/90">¿Necesitas más? Mejora tu plan</p>
+                  <Link href="/dashboard/upgrade" className="mt-4 block">
+                    <Button className="w-full rounded-full bg-purple-600 hover:bg-purple-500 text-white">Mejorar ahora</Button>
+                  </Link>
+                </div>
+
+                {/* Panel de usuario */}
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={user?.imageUrl ?? undefined} alt={name || "Usuario"} />
+                        <AvatarFallback>{(name || "U").slice(0,2).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium truncate">{isLoaded ? (name || "Usuario") : ""}</div>
+                        <div className="text-xs text-white/60 truncate">{email}</div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      aria-label={userOpen ? "Ocultar" : "Mostrar"}
+                      aria-expanded={userOpen}
+                      onClick={() => setUserOpen((v) => !v)}
+                      className="shrink-0 text-white/70 hover:text-white"
+                    >
+                      {userOpen ? <ChevronDown className="size-4" /> : <ChevronUp className="size-4" />}
+                    </button>
+                  </div>
+                  {userOpen && (
+                    <>
+                      <Link href="/dashboard/upgrade" className="border-t border-white/10 px-4 py-3 flex items-center gap-2 text-sm hover:bg-white/[0.03]">
+                        <Sparkles className="size-4 text-white/70" /> Mejorar a Pro
+                      </Link>
+                      <div className="border-t border-white/10">
+                        <SignOutButton signOutOptions={{}}>
+                          <Button variant="ghost" className="w-full justify-start gap-2 rounded-none text-left text-sm hover:bg-white/[0.03]">
+                            <LogOut className="size-4 text-white/70" /> Cerrar sesión
+                          </Button>
+                        </SignOutButton>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

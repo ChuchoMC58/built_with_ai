@@ -1,38 +1,14 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LayoutGrid, Clapperboard, Film } from "lucide-react";
+import { Clapperboard, Film } from "lucide-react";
 import Link from "next/link";
-import DashboardSidebar from "@/components/client/dashboard-sidebar";
 
 export default async function DashboardPage() {
   const user = await currentUser();
   const firstName = user?.firstName ?? "";
   return (
-    <main className="min-h-screen">
-      <div className="grid lg:grid-cols-[auto_1fr] lg:gap-0">
-        {/* Sidebar */}
-        <DashboardSidebar />
-
-        {/* Contenido */}
-        <div className="px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
-      {/* Encabezado y aviso de plan */}
-      <div className="mx-auto max-w-7xl mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-white/80">
-          <LayoutGrid className="size-4 text-white/60" />
-          <span>Dashboard</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge variant="secondary" className="bg-purple-500/10 text-purple-200 hover:bg-purple-500/15">
-            Estás en el plan Free · Actualiza para exportar videos y más
-          </Badge>
-          <Button asChild className="rounded-full bg-purple-600 hover:bg-purple-500">
-            <Link href="/pricing">Mejorar plan</Link>
-          </Button>
-        </div>
-      </div>
-
+    <>
       <div className="mx-auto max-w-7xl">
         <div className="rounded-3xl bg-white/[0.03] border border-white/10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] p-4 sm:p-6 lg:p-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center">
@@ -127,8 +103,6 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-        </div>
-      </div>
-    </main>
+    </>
   );
 }
