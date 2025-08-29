@@ -1,12 +1,5 @@
 import type { Metadata } from "next";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -15,9 +8,11 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+// Nota: Se elimina Geist_Mono para evitar precargas de woff2 no usadas
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false, // mantenemos la variable sin precargar woff2
 });
 
 export const metadata: Metadata = {
@@ -34,7 +29,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en"  className="dark">
         <body
-    className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
+  className={`${geistSans.className} ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
   {children}
         </body>

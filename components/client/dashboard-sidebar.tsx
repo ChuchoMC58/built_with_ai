@@ -20,7 +20,7 @@ import {
   ChevronUp,
   Flame,
   MenuIcon,
-  Link2,
+  // Link2,
   Moon,
   LogOut,
   Sparkles,
@@ -29,7 +29,7 @@ import {
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-type Item = { href: string; label: string; icon: React.ComponentType<any> };
+type Item = { href: string; label: string; icon: React.ComponentType<{ className?: string }> };
 
 const mainItems: Item[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { useSignUp, useClerk, useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const baseSchema = z.object({
   name: z.string().min(2, "Ingresa tu nombre"),
@@ -73,9 +74,10 @@ export default function AuthSignup() {
         await setActive({ session: attempt.createdSessionId });
         router.push("/dashboard");
       }
-    } catch (err: any) {
+    } catch (err) {
       // Muestra el mensaje de error en el primer campo
-      const message = err?.errors?.[0]?.message ?? "Ocurrió un error";
+      const e = err as { errors?: { message?: string }[] } | undefined;
+      const message = e?.errors?.[0]?.message ?? "Ocurrió un error";
       form.setError(pendingVerification ? "code" : "email", { message });
     }
   };
@@ -184,7 +186,7 @@ export default function AuthSignup() {
           </Button>
 
           <p className="text-center text-xs text-white/60">
-            ¿Ya tienes una cuenta? <a href="/sign-in" className="text-white hover:underline">Inicia sesión</a>
+            ¿Ya tienes una cuenta? <Link href="/sign-in" className="text-white hover:underline">Inicia sesión</Link>
           </p>
 
           {!pendingVerification && (

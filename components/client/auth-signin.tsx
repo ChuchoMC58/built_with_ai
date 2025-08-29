@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { useSignIn, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const schema = z.object({
   email: z.string().email("Correo inválido"),
@@ -51,8 +52,9 @@ export default function AuthSignin() {
         // MFA u otros pasos
         form.setError("email", { message: "Se requiere un paso adicional para iniciar sesión." });
       }
-    } catch (err: any) {
-      const message = err?.errors?.[0]?.message ?? "Credenciales inválidas";
+    } catch (err) {
+      const e = err as { errors?: { message?: string }[] } | undefined;
+      const message = e?.errors?.[0]?.message ?? "Credenciales inválidas";
       form.setError("password", { message });
     }
   };
@@ -116,7 +118,7 @@ export default function AuthSignin() {
           </Button>
 
           <p className="text-center text-xs text-white/60">
-            ¿No tienes cuenta? <a href="/sign-up" className="text-white hover:underline">Regístrate</a>
+            ¿No tienes cuenta? <Link href="/sign-up" className="text-white hover:underline">Regístrate</Link>
           </p>
 
           <div className="flex items-center gap-4 py-2">

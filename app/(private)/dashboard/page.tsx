@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clapperboard, Film } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import LiteYouTube from "@/components/client/lite-youtube";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -38,11 +40,14 @@ export default async function DashboardPage() {
             {/* Columna derecha - vista previa */}
             <section>
               <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-white/5">
-                <div className="aspect-video w-full">
-                  <img
+                <div className="aspect-video w-full relative">
+                  <Image
                     src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80"
                     alt="Vista previa del video"
-                    className="absolute inset-0 h-full w-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority
                   />
                 </div>
               </div>
@@ -87,17 +92,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="rounded-xl overflow-hidden border border-white/10 bg-black max-w-2xl">
-              <div className="aspect-video">
-                <iframe
-                  className="w-full h-full"
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                  title="Tutorial StoryShort"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                />
-              </div>
+              <LiteYouTube id="dQw4w9WgXcQ" title="Tutorial StoryShort" />
             </div>
             <p className="mt-3 text-sm text-white/80 font-medium">Primeros pasos con StoryShort</p>
           </CardContent>
