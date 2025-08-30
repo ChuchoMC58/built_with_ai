@@ -32,16 +32,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 type Item = { href: string; label: string; icon: React.ComponentType<{ className?: string }> };
 
 const mainItems: Item[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
-  { href: "#", label: "Videos", icon: Video },
-  { href: "#", label: "Series", icon: Clapperboard },
-  { href: "#", label: "Calendario", icon: Calendar },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutGrid }, 
+  { href: "/dashboard/videos", label: "Videos", icon: Video },
+  // { href: "#", label: "Series", icon: Clapperboard },
+  // { href: "#", label: "Calendario", icon: Calendar },
   { href: "#", label: "Exportaciones", icon: Upload },
 ];
 
 const settingsItems: Item[] = [
-  { href: "#", label: "Ajustes", icon: Settings },
-  { href: "#", label: "Afiliados 🔥", icon: Flame },
+  { href: "/dashboard/settings", label: "Ajustes", icon: Settings }
+  // { href: "#", label: "Afiliados 🔥", icon: Flame },
 ];
 
 export default function DashboardSidebar() {
